@@ -1,0 +1,6 @@
+{
+  "name": "SwiftNet",
+  "description": "SwiftNet - High-performance digital services and reseller platform powered by Ironclad IT",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
