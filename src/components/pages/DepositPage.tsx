@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, ShieldCheck, CheckCircle2, Loader2, Lock, Sparkles } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, CheckCircle2, Loader2, Lock } from 'lucide-react';
 import { useNavigation } from '@/src/context/NavigationContext';
 
 export default function DepositPage() {
@@ -10,6 +10,18 @@ export default function DepositPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [txnRef, setTxnRef] = useState('PSTK-948201');
+
+  // Prevent background scrolling when success popup is active
+  useEffect(() => {
+    if (paymentSuccess) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [paymentSuccess]);
 
   const numericAmount = Math.max(0, parseFloat(depositAmount) || 0);
   const fee = numericAmount > 0 ? +(numericAmount * 0.02).toFixed(2) : 0;

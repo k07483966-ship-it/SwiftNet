@@ -1,9 +1,10 @@
 'use client';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
-import { X, Home, Download, ShoppingBag, CheckSquare, MessageSquare, Trophy, ChevronDown, LogOut, ShieldCheck, Award, Store, Coins } from 'lucide-react';
+import { X, Home, Download, ShoppingBag, Receipt, CheckSquare, MessageSquare, Trophy, ChevronDown, LogOut, ShieldCheck, Award, Store, Coins, Package, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@/src/context/NavigationContext';
+import { MTNLogo, TelecelLogo, AirtelTigoLogo, WAECLogo } from '@/src/components/common/NetworkLogos';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -14,23 +15,30 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose, onOpenAgentModal, onOpenStoreModal }: SidebarProps) {
   const [buyDataOpen, setBuyDataOpen] = useState(false);
-  const { currentPage, navigateTo } = useNavigation();
+  const { currentPage, params, navigateTo, logoutUser } = useNavigation();
 
-  // Focus trap and ESC key
+  // Lock scroll on body when mobile sidebar is active
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     if (isOpen) {
-      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      if (typeof window !== 'undefined') {
         document.body.style.overflow = 'hidden';
+        document.body.style.touchAction = 'none';
       }
       window.addEventListener('keydown', handleKeyDown);
     } else {
-      document.body.style.overflow = '';
+      if (typeof window !== 'undefined') {
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+      }
     }
     return () => {
-      document.body.style.overflow = '';
+      if (typeof window !== 'undefined') {
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+      }
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -48,6 +56,7 @@ export default function Sidebar({ isOpen, onClose, onOpenAgentModal, onOpenStore
 
   const handleOpenBuyData = (net: 'mtn' | 'airteltigo' | 'telecel' | 'waec') => {
     navigateTo('buy-data', { network: net });
+    setBuyDataOpen(false);
     onClose();
   };
 
@@ -63,6 +72,11 @@ export default function Sidebar({ isOpen, onClose, onOpenAgentModal, onOpenStore
 
   const handleOpenOrders = () => {
     navigateTo('orders');
+    onClose();
+  };
+
+  const handleOpenTransactions = () => {
+    navigateTo('transactions');
     onClose();
   };
 
@@ -122,9 +136,11 @@ export default function Sidebar({ isOpen, onClose, onOpenAgentModal, onOpenStore
           <div className="flex-1 overflow-y-auto custom-scrollbar p-[8px]">
             <div className="font-overline text-[var(--text-3)] m-[8px_0_4px_4px] text-[10px]">OVERVIEW</div>
             
-            <div 
+            <a 
+              href="/"
               className={getItemClass('dashboard')}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 navigateTo('dashboard');
                 onClose();
               }}
@@ -135,83 +151,184 @@ export default function Sidebar({ isOpen, onClose, onOpenAgentModal, onOpenStore
               <div className={`font-label text-[12.5px] ${currentPage === 'dashboard' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
                 Dashboard
               </div>
-            </div>
+            </a>
 
-            <div className={getItemClass('deposit')} onClick={handleOpenDeposit}>
+            <a 
+              href="/deposit"
+              className={getItemClass('deposit')} 
+              onClick={(e) => {
+                e.preventDefault();
+                handleOpenDeposit();
+              }}
+            >
               <div className={getIconClass('deposit')}><Download size={14} /></div>
               <div className={`font-label text-[12.5px] ${currentPage === 'deposit' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
                 Deposit
               </div>
-            </div>
+            </a>
 
-            <div className={getItemClass('orders')} onClick={handleOpenOrders}>
+            <a 
+              href="/orders"
+              className={getItemClass('orders')} 
+              onClick={(e) => {
+                e.preventDefault();
+                handleOpenOrders();
+              }}
+            >
               <div className={getIconClass('orders')}><ShoppingBag size={14} /></div>
               <div className={`font-label text-[12.5px] ${currentPage === 'orders' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
                 Orders
               </div>
-            </div>
+            </a>
 
-            <div className={getItemClass('checkers')} onClick={handleOpenCheckers}>
+            <a 
+              href="/transactions"
+              className={getItemClass('transactions')} 
+              onClick={(e) => {
+                e.preventDefault();
+                handleOpenTransactions();
+              }}
+            >
+              <div className={getIconClass('transactions')}><Receipt size={14} /></div>
+              <div className={`font-label text-[12.5px] ${currentPage === 'transactions' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
+                Transactions
+              </div>
+            </a>
+
+            <a 
+              href="/checkers"
+              className={getItemClass('checkers')} 
+              onClick={(e) => {
+                e.preventDefault();
+                handleOpenCheckers();
+              }}
+            >
               <div className={getIconClass('checkers')}><CheckSquare size={14} /></div>
               <div className={`font-label text-[12.5px] ${currentPage === 'checkers' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
                 My checkers
               </div>
-            </div>
+            </a>
 
-            <div 
-              className={navItemClass}
-              onClick={() => {
-                window.open('https://chat.whatsapp.com', '_blank', 'noopener,noreferrer');
+            <a 
+              href="/support"
+              className={getItemClass('support')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('support');
                 onClose();
               }}
             >
-              <div className={iconChipClass}><MessageSquare size={14} /></div>
-              <div className="font-label text-[12.5px]">Support</div>
-            </div>
+              <div className={getIconClass('support')}><MessageSquare size={14} /></div>
+              <div className={`font-label text-[12.5px] ${currentPage === 'support' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
+                Support
+              </div>
+            </a>
 
-            <div className={getItemClass('leaderboard')} onClick={handleOpenLeaderboard}>
+            <a 
+              href="/leaderboard"
+              className={getItemClass('leaderboard')} 
+              onClick={(e) => {
+                e.preventDefault();
+                handleOpenLeaderboard();
+              }}
+            >
               <div className={getIconClass('leaderboard')}><Trophy size={14} /></div>
               <div className={`font-label text-[12.5px] ${currentPage === 'leaderboard' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
                 Leaderboard
               </div>
-            </div>
+            </a>
 
+            {/* BUY DATA SECTION WITH INDIVIDUAL NETWORKS */}
             <div className="font-overline text-[var(--text-3)] m-[12px_0_4px_4px] text-[10px]">BUY DATA</div>
-            <div className={getItemClass('buy-data')} onClick={() => setBuyDataOpen(!buyDataOpen)}>
+            <a 
+              href="/buy-data"
+              className={getItemClass('buy-data')} 
+              onClick={(e) => {
+                e.preventDefault();
+                setBuyDataOpen(!buyDataOpen);
+              }}
+            >
               <div className={getIconClass('buy-data')}><ShoppingBag size={13} /></div>
               <div className={`font-label text-[12px] flex-1 ${currentPage === 'buy-data' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>
                 Buy Data
               </div>
               <ChevronDown size={13} className={`text-[var(--text-3)] transition-transform duration-180 ${buyDataOpen ? 'rotate-180' : ''}`} />
-            </div>
+            </a>
             <AnimatePresence>
               {buyDataOpen && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <div className="pl-[42px] flex flex-col py-1">
-                    <div 
-                      onClick={() => handleOpenBuyData('mtn')} 
-                      className="h-[28px] flex items-center text-[11.5px] font-medium text-[var(--text-2)] hover:text-[var(--color-primary-600)] cursor-pointer transition-colors"
+                  <div className="pl-[14px] pr-[4px] flex flex-col gap-[3px] py-1.5">
+                    {/* MTN */}
+                    <a 
+                      href="/buy-data?network=mtn"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleOpenBuyData('mtn');
+                      }} 
+                      className={`h-[30px] rounded-[7px] px-[8px] flex items-center gap-[8px] text-[11.5px] font-medium transition-colors cursor-pointer ${
+                        currentPage === 'buy-data' && params.network === 'mtn'
+                          ? 'bg-amber-50 text-amber-900 font-bold border border-amber-200/80'
+                          : 'text-slate-700 hover:bg-slate-100/80'
+                      }`}
                     >
-                      MTN
-                    </div>
-                    <div 
-                      onClick={() => handleOpenBuyData('airteltigo')} 
-                      className="h-[28px] flex items-center text-[11.5px] font-medium text-[var(--text-2)] hover:text-[var(--color-primary-600)] cursor-pointer transition-colors"
+                      <MTNLogo className="w-[18px] h-[18px] flex-shrink-0" />
+                      <span className="flex-1 truncate">MTN</span>
+                      <span className="text-[9px] font-bold text-amber-700 bg-amber-100/90 px-[4px] py-[0.5px] rounded-[3px]">4.50+</span>
+                    </a>
+
+                    {/* Telecel */}
+                    <a 
+                      href="/buy-data?network=telecel"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleOpenBuyData('telecel');
+                      }} 
+                      className={`h-[30px] rounded-[7px] px-[8px] flex items-center gap-[8px] text-[11.5px] font-medium transition-colors cursor-pointer ${
+                        currentPage === 'buy-data' && params.network === 'telecel'
+                          ? 'bg-red-50 text-red-900 font-bold border border-red-200/80'
+                          : 'text-slate-700 hover:bg-slate-100/80'
+                      }`}
                     >
-                      AirtelTigo
-                    </div>
-                    <div 
-                      onClick={() => handleOpenBuyData('telecel')} 
-                      className="h-[28px] flex items-center text-[11.5px] font-medium text-[var(--text-2)] hover:text-[var(--color-primary-600)] cursor-pointer transition-colors"
+                      <TelecelLogo className="w-[18px] h-[18px] flex-shrink-0" variant="red" />
+                      <span className="flex-1 truncate">Telecel</span>
+                      <span className="text-[9px] font-bold text-red-700 bg-red-100/90 px-[4px] py-[0.5px] rounded-[3px]">6.00+</span>
+                    </a>
+
+                    {/* AirtelTigo */}
+                    <a 
+                      href="/buy-data?network=airteltigo"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleOpenBuyData('airteltigo');
+                      }} 
+                      className={`h-[30px] rounded-[7px] px-[8px] flex items-center gap-[8px] text-[11.5px] font-medium transition-colors cursor-pointer ${
+                        currentPage === 'buy-data' && params.network === 'airteltigo'
+                          ? 'bg-sky-50 text-sky-900 font-bold border border-sky-200/80'
+                          : 'text-slate-700 hover:bg-slate-100/80'
+                      }`}
                     >
-                      Telecel
-                    </div>
-                    <div 
-                      onClick={() => handleOpenBuyData('waec')} 
-                      className="h-[28px] flex items-center text-[11.5px] font-medium text-[var(--text-2)] hover:text-[var(--color-primary-600)] cursor-pointer transition-colors"
+                      <AirtelTigoLogo className="w-[18px] h-[18px] flex-shrink-0" />
+                      <span className="flex-1 truncate">AirtelTigo</span>
+                      <span className="text-[9px] font-bold text-sky-700 bg-sky-100/90 px-[4px] py-[0.5px] rounded-[3px]">8.00+</span>
+                    </a>
+
+                    {/* Results Checkers */}
+                    <a 
+                      href="/buy-data?network=waec"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleOpenBuyData('waec');
+                      }} 
+                      className={`h-[30px] rounded-[7px] px-[8px] flex items-center gap-[8px] text-[11.5px] font-medium transition-colors cursor-pointer ${
+                        currentPage === 'buy-data' && params.network === 'waec'
+                          ? 'bg-blue-50 text-blue-900 font-bold border border-blue-200/80'
+                          : 'text-slate-700 hover:bg-slate-100/80'
+                      }`}
                     >
-                      Results Checkers
-                    </div>
+                      <WAECLogo className="w-[18px] h-[18px] flex-shrink-0" />
+                      <span className="flex-1 truncate">Results Checkers</span>
+                      <span className="text-[9px] font-bold text-blue-700 bg-blue-100/90 px-[4px] py-[0.5px] rounded-[3px]">20.00</span>
+                    </a>
                   </div>
                 </motion.div>
               )}
@@ -224,9 +341,11 @@ export default function Sidebar({ isOpen, onClose, onOpenAgentModal, onOpenStore
             </div>
 
             {/* Become an Agent / Upgrade */}
-            <div 
+            <a 
+              href="#agent-upgrade"
               className={navItemClass}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 onOpenAgentModal?.();
                 onClose();
               }}
@@ -236,45 +355,108 @@ export default function Sidebar({ isOpen, onClose, onOpenAgentModal, onOpenStore
               </div>
               <div className="font-label text-[12px] font-medium flex-1 text-slate-700 group-hover:text-blue-600">Become an Agent</div>
               <span className="text-[8.5px] font-bold px-[5px] py-[1px] rounded-[4px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white tracking-wider">UPGRADE</span>
-            </div>
+            </a>
 
             {/* Create Store */}
-            <div 
-              className={getItemClass('store')}
-              onClick={() => handleOpenStore('create')}
+            <a 
+              href="/create-store"
+              className={getItemClass('create-store')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('create-store');
+                onClose();
+              }}
             >
-              <div className={getIconClass('store')}><Store size={13.5} /></div>
-              <div className={`font-label text-[12px] flex-1 ${currentPage === 'store' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>Create Store</div>
-            </div>
+              <div className={getIconClass('create-store')}><Store size={13.5} /></div>
+              <div className={`font-label text-[12px] flex-1 ${currentPage === 'create-store' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>Create Store</div>
+            </a>
+
+            {/* Store Packages */}
+            <a 
+              href="/store-packages"
+              className={getItemClass('store-packages')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('store-packages');
+                onClose();
+              }}
+            >
+              <div className={getIconClass('store-packages')}><Package size={13.5} /></div>
+              <div className={`font-label text-[12px] flex-1 ${currentPage === 'store-packages' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>Store Packages</div>
+            </a>
 
             {/* Store Orders */}
-            <div 
-              className={navItemClass}
-              onClick={() => handleOpenStore('orders')}
+            <a 
+              href="/store-orders"
+              className={getItemClass('store-orders')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('store-orders');
+                onClose();
+              }}
             >
-              <div className={iconChipClass}><ShoppingBag size={13.5} /></div>
-              <div className="font-label text-[12px] flex-1">Store Orders</div>
-              <span className="text-[9.5px] font-bold px-[5px] py-[0.5px] rounded-full bg-slate-100 border border-slate-200 text-slate-600">6</span>
-            </div>
+              <div className={getIconClass('store-orders')}><ShoppingBag size={13.5} /></div>
+              <div className={`font-label text-[12px] flex-1 ${currentPage === 'store-orders' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>Store Orders</div>
+            </a>
 
             {/* Store Earnings */}
-            <div 
-              className={navItemClass}
-              onClick={() => handleOpenStore('earnings')}
+            <a 
+              href="/store"
+              className={getItemClass('store')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('store');
+                onClose();
+              }}
             >
-              <div className="w-[24px] h-[24px] rounded-[6px] flex items-center justify-center bg-emerald-50 border border-emerald-200/80 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-180">
+              <div className={getIconClass('store')}>
                 <Coins size={13.5} />
               </div>
-              <div className="font-label text-[12px] flex-1 text-slate-700 group-hover:text-emerald-700">Store Earnings</div>
+              <div className={`font-label text-[12px] flex-1 ${currentPage === 'store' || currentPage === 'store-earnings' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>Store Earnings</div>
               <span className="text-[9.5px] font-bold px-[5px] py-[0.5px] rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">₵485.50</span>
-            </div>
+            </a>
 
-            <div className="h-[36px] rounded-[8px] px-[8px] mt-[16px] flex items-center gap-[10px] text-[var(--text-2)] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition-colors duration-180 cursor-pointer group">
+            {/* Admin Panel Link */}
+            <a 
+              href="/admin/mastergatepanel"
+              className="h-[36px] rounded-[8px] px-[8px] flex items-center gap-[10px] text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-180 cursor-pointer font-semibold"
+            >
+              <div className="w-[24px] h-[24px] rounded-[6px] flex items-center justify-center bg-indigo-100/70 border border-indigo-200 text-indigo-600">
+                <ShieldCheck size={13} />
+              </div>
+              <div className="font-label text-[12px]">Admin Panel</div>
+            </a>
+
+            {/* My Account */}
+            <a 
+              href="/account"
+              className={getItemClass('account')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('account');
+                onClose();
+              }}
+            >
+              <div className={getIconClass('account')}>
+                <User size={13.5} />
+              </div>
+              <div className={`font-label text-[12px] flex-1 ${currentPage === 'account' ? 'text-[var(--color-primary-500)] font-semibold' : ''}`}>My Account</div>
+            </a>
+
+            <a 
+              href="#logout"
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+                logoutUser();
+              }}
+              className="h-[36px] rounded-[8px] px-[8px] mt-[16px] flex items-center gap-[10px] text-[var(--text-2)] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition-colors duration-180 cursor-pointer group"
+            >
               <div className="w-[24px] h-[24px] rounded-[6px] flex items-center justify-center bg-[var(--surface-2)] border border-[var(--border)] group-hover:bg-white group-hover:border-[#FECACA] group-hover:text-[#DC2626] transition-colors duration-180">
                 <LogOut size={13} />
               </div>
               <div className="font-label text-[12px]">Logout</div>
-            </div>
+            </a>
           </div>
 
           {/* Professional Smaller Powered by Ironclad IT */}

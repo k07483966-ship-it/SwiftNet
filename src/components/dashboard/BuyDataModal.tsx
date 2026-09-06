@@ -86,9 +86,7 @@ export default function BuyDataModal({
       if (e.key === 'Escape') handleClose();
     };
     if (isOpen) {
-      if (window.innerWidth < 1024) {
-        document.body.style.overflow = 'hidden';
-      }
+      document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
     } else {
       document.body.style.overflow = '';

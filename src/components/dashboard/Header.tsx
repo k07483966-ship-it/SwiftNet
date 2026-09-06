@@ -47,12 +47,16 @@ export default function Header({
               <div key={crumb.label} className="flex items-center">
                 {idx > 0 && <ChevronRight size={10} className="mx-[4px] text-slate-300 flex-shrink-0" />}
                 {crumb.page && !isLast ? (
-                  <button
-                    onClick={() => navigateTo(crumb.page!)}
+                  <a
+                    href={crumb.page === 'dashboard' ? '/' : `/${crumb.page}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigateTo(crumb.page!);
+                    }}
                     className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                   >
                     {crumb.label}
-                  </button>
+                  </a>
                 ) : (
                   <span className={isLast ? 'text-slate-800 font-semibold truncate max-w-[200px]' : 'text-slate-500'}>
                     {crumb.label}
@@ -91,9 +95,9 @@ export default function Header({
               <div className="text-[10px] font-normal text-[var(--text-3)]">Agent</div>
             </div>
 
-            <div className="relative w-[28px] h-[28px] rounded-full overflow-hidden border border-[var(--border-2)] hover:border-blue-400 transition-all flex items-center justify-center shadow-xs">
+            <div className="relative w-[28px] h-[28px] rounded-full overflow-hidden border border-[var(--border-2)] hover:border-blue-400 transition-all flex items-center justify-center shadow-xs bg-slate-100">
               <Image 
-                src="https://picsum.photos/seed/ktech/100/100" 
+                src="https://i.postimg.cc/s2pRY0YM/image-removebg-preview-(38).png" 
                 alt="Profile Avatar" 
                 fill 
                 className="object-cover"

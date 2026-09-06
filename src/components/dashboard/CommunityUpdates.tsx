@@ -98,24 +98,28 @@ export default function CommunityUpdates() {
             </div>
           </div>
 
-          <div className="flex w-full gap-[12px] mt-[20px]">
-            {/* 3D Telegram Button */}
-            <button className="flex-1 h-[42px] rounded-[10px] bg-white border-[1.5px] border-b-[3px] border-[#93C5FD] flex items-center justify-center gap-[6px] hover:-translate-y-[1px] hover:border-b-[4px] active:translate-y-[1px] active:border-b-[1.5px] transition-all group cursor-pointer">
-              <Send size={12} className="text-[#3B82F6] group-hover:scale-[1.1] transition-transform" />
-              <div className="flex flex-col items-center">
-                <span className="font-semibold text-[10.5px] text-[#3B82F6] leading-[1.1]">Join Telegram</span>
-                <span className="font-semibold text-[10.5px] text-[#3B82F6] leading-[1.1]">Channel</span>
-              </div>
-            </button>
+          <div className="flex w-full gap-[10px] mt-[18px]">
+            {/* Flat Telegram Channel Link */}
+            <a 
+              href="https://whatsapp.com/channel/0029VbCKvh14Y9lwsjaP6N1m"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 h-[38px] rounded-[10px] bg-blue-50 hover:bg-blue-100/80 border border-blue-200/80 flex items-center justify-center gap-[6px] active:scale-[0.98] transition-all group cursor-pointer"
+            >
+              <Send size={13} className="text-[#2563EB]" />
+              <span className="font-semibold text-[11.5px] text-[#2563EB]">Telegram Channel</span>
+            </a>
             
-            {/* 3D WhatsApp Button */}
-            <button className="flex-1 h-[42px] rounded-[10px] bg-white border-[1.5px] border-b-[3px] border-[#86EFAC] flex items-center justify-center gap-[6px] hover:-translate-y-[1px] hover:border-b-[4px] active:translate-y-[1px] active:border-b-[1.5px] transition-all group cursor-pointer">
-              <MessageCircle size={12} className="text-[#22C55E] group-hover:scale-[1.1] transition-transform" />
-              <div className="flex flex-col items-center">
-                <span className="font-semibold text-[10.5px] text-[#22C55E] leading-[1.1]">Join WhatsApp</span>
-                <span className="font-semibold text-[10.5px] text-[#22C55E] leading-[1.1]">Channel</span>
-              </div>
-            </button>
+            {/* Flat WhatsApp Channel Link */}
+            <a 
+              href="https://whatsapp.com/channel/0029VbCKvh14Y9lwsjaP6N1m"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 h-[38px] rounded-[10px] bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/80 flex items-center justify-center gap-[6px] active:scale-[0.98] transition-all group cursor-pointer"
+            >
+              <MessageCircle size={13} className="text-[#16A34A]" />
+              <span className="font-semibold text-[11.5px] text-[#16A34A]">WhatsApp Channel</span>
+            </a>
           </div>
         </div>
       </motion.div>

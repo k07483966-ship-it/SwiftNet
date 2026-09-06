@@ -1,7 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Sparkles, Check, ArrowRight, ShieldCheck, Zap, Award, Percent, Store, Users } from 'lucide-react';
+import { X, Sparkles, Check, ArrowRight, ShieldCheck, Zap, Award, Percent, Store, Users, Wallet } from 'lucide-react';
+import { useNavigation } from '@/src/context/NavigationContext';
+import toast from 'react-hot-toast';
 
 interface AgentUpgradeModalProps {
   isOpen: boolean;
@@ -9,6 +11,7 @@ interface AgentUpgradeModalProps {
 }
 
 export default function AgentUpgradeModal({ isOpen, onClose }: AgentUpgradeModalProps) {
+  const { balance, deductFunds, addTransaction } = useNavigation();
   const [upgraded, setUpgraded] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -29,10 +32,33 @@ export default function AgentUpgradeModal({ isOpen, onClose }: AgentUpgradeModal
   }, [isOpen, onClose]);
 
   const handleUpgrade = () => {
+    const AGENT_PRICE = 30.0;
+    if (balance < AGENT_PRICE) {
+      toast.error(`Insufficient wallet balance. You need GH₵ ${AGENT_PRICE.toFixed(2)} to upgrade.`);
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
+      const success = deductFunds(AGENT_PRICE);
       setLoading(false);
-      setUpgraded(true);
+
+      if (success) {
+        addTransaction({
+          type: 'agent_commission',
+          title: 'Agent Upgrade Fee',
+          description: 'One-time Super Agent Tier Activation',
+          amount: AGENT_PRICE,
+          direction: 'debit',
+          ref: `AGT-${Math.floor(10000 + Math.random() * 90000)}`,
+          status: 'Success',
+          channel: 'Wallet Balance',
+        });
+        setUpgraded(true);
+        toast.success(`Upgraded to Super Agent! GH₵ ${AGENT_PRICE.toFixed(2)} deducted from wallet.`);
+      } else {
+        toast.error('Failed to process wallet payment. Please try again.');
+      }
     }, 800);
   };
 
@@ -177,7 +203,18 @@ export default function AgentUpgradeModal({ isOpen, onClose }: AgentUpgradeModal
                   </div>
 
                   {/* Upgrade Action */}
-                  <div className="mt-[18px] pt-[14px] border-t border-slate-100 flex flex-col gap-[8px]">
+                  <div className="mt-[18px] pt-[14px] border-t border-slate-100 flex flex-col gap-[10px]">
+                    <div className="p-[10px] rounded-[10px] bg-slate-50 border border-slate-200 flex items-center justify-between text-[11.5px]">
+                      <div className="flex items-center gap-[6px] text-slate-700 font-medium">
+                        <Wallet size={15} className="text-blue-600" />
+                        <span>Wallet Balance:</span>
+                        <span className="font-bold text-slate-900">GH₵ {balance.toFixed(2)}</span>
+                      </div>
+                      <span className="font-black text-blue-700 bg-blue-50 border border-blue-200 px-[8px] py-[2px] rounded-[6px]">
+                        Fee: GH₵ 30.00
+                      </span>
+                    </div>
+
                     <button
                       onClick={handleUpgrade}
                       disabled={loading}
@@ -187,14 +224,14 @@ export default function AgentUpgradeModal({ isOpen, onClose }: AgentUpgradeModal
                         <span className="inline-block animate-spin">⏳</span>
                       ) : (
                         <>
-                          <span>Activate Super Agent Upgrade</span>
+                          <span>Pay GH₵ 30.00 with Wallet</span>
                           <ArrowRight size={14} strokeWidth={2.5} />
                         </>
                       )}
                     </button>
                     <div className="flex items-center justify-center gap-[4px] text-[10.5px] text-slate-400">
                       <ShieldCheck size={12} className="text-emerald-500" />
-                      <span>Instant activation • 0 setup fees</span>
+                      <span>Instant activation via Wallet Balance</span>
                     </div>
                   </div>
                 </>

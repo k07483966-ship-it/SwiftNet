@@ -19,8 +19,10 @@ export default function HeroCard() {
   const handleActionClick = (label: string) => {
     if (label === 'Create Store') {
       navigateTo('store', { tab: 'create' });
-    } else if (label === 'Orders' || label === 'Transactions') {
+    } else if (label === 'Orders') {
       navigateTo('orders');
+    } else if (label === 'Transactions') {
+      navigateTo('transactions');
     } else if (label === 'Deposit') {
       navigateTo('deposit');
     } else if (label === 'Buy Data') {
@@ -68,27 +70,45 @@ export default function HeroCard() {
       <div className="relative z-10 mt-[18px] grid grid-cols-2 min-[360px]:grid-cols-3 gap-[8px]">
         {quickActions.map((action, idx) => {
           const Icon = action.icon;
+          const hrefMap: Record<string, string> = {
+            'Deposit': '/deposit',
+            'Orders': '/orders',
+            'Transactions': '/transactions',
+            'Buy Data': '/buy-data?network=mtn',
+            'Results Checker': '/checkers',
+            'Create Store': '/store',
+          };
+          const targetHref = hrefMap[action.label] || '/';
+
           if (action.primary) {
             return (
-              <button 
+              <a 
                 key={idx} 
-                onClick={() => handleActionClick(action.label)}
-                className="h-[34px] w-full rounded-[9px] bg-[#3B82F6] text-white border border-[#2563EB] border-b-[3px] border-b-[#1D4ED8] shadow-sm flex items-center justify-center gap-[6px] hover:bg-[#2563EB] active:translate-y-[1.5px] active:border-b-[1px] transition-all px-[8px] cursor-pointer"
+                href={targetHref}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleActionClick(action.label);
+                }}
+                className="h-[34px] w-full rounded-[9px] bg-sky-600 hover:bg-sky-700 text-white shadow-2xs flex items-center justify-center gap-[6px] active:scale-[0.98] transition-all px-[8px] cursor-pointer"
               >
                 <Icon size={13.5} className="text-white flex-shrink-0" />
                 <span className="font-label text-[11px] min-[400px]:text-[11.5px] font-semibold text-white truncate">{action.label}</span>
-              </button>
+              </a>
             );
           }
           return (
-            <button 
+            <a 
               key={idx} 
-              onClick={() => handleActionClick(action.label)}
-              className="h-[34px] w-full rounded-[9px] bg-white border-[1.5px] border-[var(--border-2)] border-b-[3px] border-b-slate-300 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex items-center justify-center gap-[6px] hover:bg-slate-50/80 active:translate-y-[1.5px] active:border-b-[1.5px] transition-all group px-[8px] cursor-pointer"
+              href={targetHref}
+              onClick={(e) => {
+                e.preventDefault();
+                handleActionClick(action.label);
+              }}
+              className="h-[34px] w-full rounded-[9px] bg-white border border-slate-200 shadow-2xs flex items-center justify-center gap-[6px] hover:bg-slate-50/80 active:scale-[0.98] transition-all group px-[8px] cursor-pointer"
             >
               <Icon size={13.5} className="text-[var(--text-2)] flex-shrink-0 group-hover:text-[var(--color-primary-600)] transition-colors" />
               <span className="font-label text-[11px] min-[400px]:text-[11.5px] font-semibold text-[var(--text-1)] group-hover:text-[var(--color-primary-700)] truncate transition-colors">{action.label}</span>
-            </button>
+            </a>
           );
         })}
       </div>

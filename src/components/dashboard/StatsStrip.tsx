@@ -5,8 +5,8 @@ import { useCountUp } from '@/src/hooks/useCountUp';
 import { useNavigation } from '@/src/context/NavigationContext';
 
 export default function StatsStrip() {
-  const ordersCount = useCountUp(0, 600); // 0 for empty state
-  const { balance, navigateTo } = useNavigation();
+  const { balance, orders, navigateTo } = useNavigation();
+  const ordersCount = useCountUp(orders.length, 600);
 
   return (
     <motion.div 
@@ -36,12 +36,16 @@ export default function StatsStrip() {
           <div className="font-h2 text-[15px] text-[var(--text-1)] font-semibold tabular-nums mt-[3px] leading-none">
             GH₵{balance.toFixed(2)}
           </div>
-          <button 
-            onClick={() => navigateTo('deposit')}
-            className="h-[26px] px-[12px] rounded-[8px] bg-[var(--color-ink-900)] hover:bg-[var(--color-ink-800)] text-white font-caption text-[11px] font-semibold mt-[5px] active:scale-[0.985] transition-all cursor-pointer"
+          <a 
+            href="/deposit"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateTo('deposit');
+            }}
+            className="h-[26px] px-[12px] rounded-[8px] bg-[var(--color-ink-900)] hover:bg-[var(--color-ink-800)] text-white font-caption text-[11px] font-semibold mt-[5px] active:scale-[0.985] transition-all cursor-pointer flex items-center justify-center"
           >
             Deposit
-          </button>
+          </a>
         </div>
       </div>
 

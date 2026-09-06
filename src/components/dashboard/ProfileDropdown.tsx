@@ -14,12 +14,15 @@ import {
   X
 } from 'lucide-react';
 
+import { useNavigation } from '@/src/context/NavigationContext';
+
 interface ProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProps) {
+  const { balance, navigateTo, logoutUser } = useNavigation();
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -77,9 +80,9 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-[10px]">
               <div className="relative flex-shrink-0">
-                <div className="w-[38px] h-[38px] rounded-full overflow-hidden border-2 border-white shadow-xs ring-1 ring-slate-200/80">
+                <div className="w-[38px] h-[38px] rounded-full overflow-hidden border-2 border-white shadow-xs ring-1 ring-slate-200/80 bg-slate-100">
                   <Image
-                    src="https://picsum.photos/seed/ktech/100/100"
+                    src="https://i.postimg.cc/s2pRY0YM/image-removebg-preview-(38).png"
                     alt="ktech avatar"
                     fill
                     className="object-cover"
@@ -134,20 +137,22 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
               </div>
               <div>
                 <div className="text-[9.5px] font-medium text-slate-400 leading-none">Balance</div>
-                <div className="text-[13px] font-bold text-slate-800 tracking-tight leading-snug mt-[1px]">₵0.00</div>
+                <div className="text-[13px] font-bold text-slate-800 tracking-tight leading-snug mt-[1px] tabular-nums">GH₵{balance.toFixed(2)}</div>
               </div>
             </div>
 
-            <button 
-              onClick={() => {
+            <a 
+              href="/deposit"
+              onClick={(e) => {
+                e.preventDefault();
                 onClose();
-                window.dispatchEvent(new CustomEvent('open-deposit-modal'));
+                navigateTo('deposit');
               }}
               className="h-[24px] px-[8px] rounded-[6px] bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white text-[10.5px] font-semibold flex items-center gap-[3px] transition-all cursor-pointer"
             >
               <Plus size={11} strokeWidth={2.5} />
               <span>Deposit</span>
-            </button>
+            </a>
           </div>
         </div>
 
@@ -173,8 +178,10 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
               </p>
             </div>
 
-            <button
-              onClick={() => {
+            <a
+              href="#agent-upgrade"
+              onClick={(e) => {
+                e.preventDefault();
                 onClose();
                 window.dispatchEvent(new CustomEvent('open-agent-modal'));
               }}
@@ -182,15 +189,20 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
             >
               <span>Upgrade Account</span>
               <ArrowUpRight size={12} />
-            </button>
+            </a>
           </div>
         </div>
 
         {/* Account Menu Section */}
         <div className="px-[8px] pb-[8px] space-y-[1px]">
-          <button 
-            onClick={onClose}
-            className="w-full h-[34px] px-[8px] rounded-[8px] flex items-center justify-between text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors group"
+          <a 
+            href="/account"
+            onClick={(e) => {
+              e.preventDefault();
+              onClose();
+              navigateTo('account');
+            }}
+            className="w-full h-[34px] px-[8px] rounded-[8px] flex items-center justify-between text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors group cursor-pointer"
           >
             <div className="flex items-center gap-[8px]">
               <div className="w-[24px] h-[24px] rounded-[6px] bg-slate-100 border border-slate-200/60 flex items-center justify-center text-slate-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
@@ -199,11 +211,16 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
               <span className="text-[12px] font-medium">My Account</span>
             </div>
             <span className="text-[10px] text-slate-400">Settings</span>
-          </button>
+          </a>
 
-          <button 
-            onClick={onClose}
-            className="w-full h-[34px] px-[8px] rounded-[8px] flex items-center justify-between text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors group"
+          <a 
+            href="/account"
+            onClick={(e) => {
+              e.preventDefault();
+              onClose();
+              navigateTo('account');
+            }}
+            className="w-full h-[34px] px-[8px] rounded-[8px] flex items-center justify-between text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors group cursor-pointer"
           >
             <div className="flex items-center gap-[8px]">
               <div className="w-[24px] h-[24px] rounded-[6px] bg-slate-100 border border-slate-200/60 flex items-center justify-center text-slate-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
@@ -212,18 +229,23 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
               <span className="text-[12px] font-medium">Security & PIN</span>
             </div>
             <span className="text-[10px] text-slate-400">2FA Active</span>
-          </button>
+          </a>
         </div>
 
         {/* Logout & Brand Footer */}
         <div className="p-[8px] bg-slate-50 border-t border-slate-100">
-          <button
-            onClick={onClose}
-            className="w-full h-[32px] rounded-[8px] bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-rose-600 transition-all flex items-center justify-center gap-[6px] font-semibold text-[11.5px] active:scale-[0.98] shadow-2xs"
+          <a
+            href="#logout"
+            onClick={(e) => {
+              e.preventDefault();
+              onClose();
+              logoutUser();
+            }}
+            className="w-full h-[32px] rounded-[8px] bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-rose-600 transition-all flex items-center justify-center gap-[6px] font-semibold text-[11.5px] active:scale-[0.98] shadow-2xs cursor-pointer"
           >
             <LogOut size={12} strokeWidth={2.2} />
             <span>Log Out</span>
-          </button>
+          </a>
           <div className="flex items-center justify-center gap-[6px] text-[9.5px] text-slate-400 mt-[7px]">
             <div className="w-[14px] h-[14px] relative flex-shrink-0">
               <Image
@@ -241,3 +263,4 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
     </>
   );
 }
+

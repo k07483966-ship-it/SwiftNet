@@ -21,10 +21,15 @@ export default function WhatsAppBanner() {
         <div className="font-caption text-[11px] text-[var(--text-3)] mt-[1px] truncate">Updates, promos & support</div>
       </div>
 
-      <button className="h-[30px] px-[12px] rounded-[9px] bg-[var(--color-green-500)] hover:bg-[var(--color-green-600)] shadow-[0_2px_6px_rgba(34,197,94,0.25)] flex items-center gap-[4px] text-white flex-shrink-0 active:scale-[0.985] transition-all">
+      <a 
+        href="https://whatsapp.com/channel/0029VbCKvh14Y9lwsjaP6N1m"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="h-[30px] px-[12px] rounded-[8px] bg-[var(--color-green-500)] hover:bg-[var(--color-green-600)] shadow-xs flex items-center gap-[4px] text-white flex-shrink-0 active:scale-[0.98] transition-all cursor-pointer"
+      >
         <span className="font-label text-[12px] font-semibold">Follow</span>
         <ArrowRight size={13} />
-      </button>
+      </a>
     </motion.div>
   );
 }

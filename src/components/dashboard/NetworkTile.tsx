@@ -1,43 +1,31 @@
 'use client';
 import { Network } from '@/src/data/networks';
 import { useNavigation } from '@/src/context/NavigationContext';
+import { MTNLogo, TelecelLogo, AirtelTigoLogo, WAECLogo } from '@/src/components/common/NetworkLogos';
 
 export default function NetworkTile({ network }: { network: Network }) {
   const { navigateTo } = useNavigation();
   
+  const targetHref = network.brandType === 'waec' ? '/checkers' : `/buy-data?network=${network.brandType}`;
+
   const renderLogo = () => {
     switch (network.brandType) {
       case 'mtn':
-        return (
-          <div className="w-full h-full bg-[#FFCC00] flex items-center justify-center rounded-[5px]">
-            <span className="text-black font-bold text-[12px] tracking-tighter">MTN</span>
-          </div>
-        );
+        return <MTNLogo className="w-full h-full" />;
       case 'airteltigo':
-        return (
-          <div className="w-full h-full bg-[#001D4A] relative overflow-hidden flex items-center justify-center rounded-[5px]">
-             <div className="absolute bottom-0 w-full h-[40%] bg-[#E21B22]" />
-             <span className="text-white font-bold text-[10px] relative z-10 italic">AirtelTigo</span>
-          </div>
-        );
+        return <AirtelTigoLogo className="w-full h-full" />;
       case 'telecel':
-        return (
-          <div className="w-full h-full bg-white border border-[#E21B22] flex items-center justify-center rounded-[5px]">
-            <span className="text-[#E21B22] font-bold text-[18px]">t</span>
-          </div>
-        );
+        return <TelecelLogo className="w-full h-full" variant="red" />;
       case 'waec':
-        return (
-          <div className="w-full h-full bg-[#1F3E7C] flex items-center justify-center rounded-[5px]">
-            <span className="text-[#FBB03B] font-bold text-[11px] text-center leading-tight">WAEC<br/>Crest</span>
-          </div>
-        );
+        return <WAECLogo className="w-full h-full" />;
     }
   };
 
   return (
-    <button 
-      onClick={() => {
+    <a 
+      href={targetHref}
+      onClick={(e) => {
+        e.preventDefault();
         if (network.brandType === 'waec') {
           navigateTo('checkers');
         } else {
@@ -52,6 +40,6 @@ export default function NetworkTile({ network }: { network: Network }) {
       <div className="font-label text-[11px] text-[var(--text-1)] mt-[4px] text-center w-full truncate h-[16px]">
         {network.name}
       </div>
-    </button>
+    </a>
   );
 }
